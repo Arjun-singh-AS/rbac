@@ -6,14 +6,13 @@ import Basichome from "../Components/basichome"
 import Users from "@/Components/admin";
 import AddMessage from "@/Components/developer";
 import DisplayMessages from "@/Components/user";
+import Navbar from "@/Components/navbar"
 
 export default function Home() {
-  const [userRole, setUserRole] = useState<string | null>(null); // User role
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
-  const router = useRouter();
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Fetch user role and login state from token
-  useEffect(() => {
+  const updateAuthState = () => {
     const token = localStorage.getItem("token");
     if (token) {
       const decodeToken = (token: string) => {
@@ -22,16 +21,37 @@ export default function Home() {
         return JSON.parse(window.atob(base64));
       };
       const decoded = decodeToken(token);
-      setUserRole(decoded.role); // Set role from token
-      console.log(decoded.role)
-      setIsLoggedIn(true); // Mark as logged in
-      console.log(userRole)
+      setUserRole(decoded.role);
+      setIsLoggedIn(true);
     } else {
-      setIsLoggedIn(false); // Mark as logged out
+      setUserRole(null);
+      setIsLoggedIn(false);
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUserRole(null);
+    setIsLoggedIn(false);
+  };
+
+  useEffect(() => {
+    updateAuthState();
+
+    // Listen for changes to the token
+    const handleStorageChange = () => {
+      updateAuthState();
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   return (
+    <>
+    <Navbar userRole={userRole} isLoggedIn={isLoggedIn} logout={logout} />
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center">
       {userRole === "Admin" ? (
         <Users/>
@@ -55,5 +75,6 @@ export default function Home() {
         <Basichome/>
       )}
     </div>
+    </>
   );
 }
