@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Navbar from '@/Components/navbar';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -42,8 +43,13 @@ const Register = () => {
       setError('An error occurred. Please try again later.');
     }
   };
+  const logout = () => {
+    
+  };
 
   return (
+    <>
+    <Navbar userRole={""} isLoggedIn={false} logout={logout} />
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit}
@@ -147,6 +153,7 @@ const Register = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 

@@ -2,12 +2,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import jwt from 'jsonwebtoken';
+import Navbar from '@/Components/navbar';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  
 
   const decodeToken = (token: string) => {
     try {
@@ -50,8 +52,13 @@ const Login = () => {
       setError(err.message);
     }
   };
+  const logout = () => {
+    
+  };
 
   return (
+    <>
+    <Navbar userRole={""} isLoggedIn={false} logout={logout} />
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <form
         onSubmit={handleLogin}
@@ -101,6 +108,7 @@ const Login = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 
